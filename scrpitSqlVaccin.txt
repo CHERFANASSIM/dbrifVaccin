@@ -1,0 +1,150 @@
+create database vaccin_enfant_db ;
+use vaccin_enfant_db;
+#------------------------------------------------------------
+#        Script MySQL.
+#------------------------------------------------------------
+
+
+#------------------------------------------------------------
+# Table: CentreMedicaux
+#------------------------------------------------------------
+
+CREATE TABLE CentreMedicaux(
+        id      Int  Auto_increment  NOT NULL ,
+        nom     Varchar (150) NOT NULL ,
+        adresse Varchar (150) NOT NULL
+	,CONSTRAINT CentreMedicaux_PK PRIMARY KEY (id)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Medcin
+#------------------------------------------------------------
+
+CREATE TABLE Medcin(
+        numero Varchar (5) NOT NULL ,
+        nom    Varchar (150) NOT NULL ,
+        PRENOM Varchar NOT NULL ,
+        id     Int NOT NULL
+	,CONSTRAINT Medcin_PK PRIMARY KEY (numero)
+
+	,CONSTRAINT Medcin_CentreMedicaux_FK FOREIGN KEY (id) REFERENCES CentreMedicaux(id)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Ecole
+#------------------------------------------------------------
+
+CREATE TABLE Ecole(
+        idecole         Int  Auto_increment  NOT NULL ,
+        nom             Varchar (150) NOT NULL ,
+        nombreDesEleves Int NOT NULL ,
+        adresse         Varchar (150) NOT NULL ,
+        vois            Varchar (150) NOT NULL ,
+        code            Int NOT NULL
+	,CONSTRAINT Ecole_PK PRIMARY KEY (idecole)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Enfant
+#------------------------------------------------------------
+
+CREATE TABLE Enfant(
+        idenfanf Int  Auto_increment  NOT NULL ,
+        nom      Varchar (150) NOT NULL ,
+        prenom   Varchar (150) NOT NULL ,
+        age      Int NOT NULL ,
+        sexe     Varchar (150) NOT NULL ,
+        poids    Float NOT NULL ,
+        taille   Float NOT NULL ,
+        idecole  Int NOT NULL
+	,CONSTRAINT Enfant_PK PRIMARY KEY (idenfanf)
+
+	,CONSTRAINT Enfant_Ecole_FK FOREIGN KEY (idecole) REFERENCES Ecole(idecole)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Specialite
+#------------------------------------------------------------
+
+CREATE TABLE Specialite(
+        idspecialite    Int  Auto_increment  NOT NULL ,
+        nomDeSpecialite Varchar (150) NOT NULL
+	,CONSTRAINT Specialite_PK PRIMARY KEY (idspecialite)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Categorie
+#------------------------------------------------------------
+
+CREATE TABLE Categorie(
+        id          Int  Auto_increment  NOT NULL ,
+        nom         Varchar (150) NOT NULL ,
+        description Varchar (150) NOT NULL ,
+        codeS       Int NOT NULL
+	,CONSTRAINT Categorie_PK PRIMARY KEY (id)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: vaccin
+#------------------------------------------------------------
+
+CREATE TABLE vaccin(
+        idvaccin Int  Auto_increment  NOT NULL ,
+        nom      Varchar (150) NOT NULL ,
+        id       Int NOT NULL
+	,CONSTRAINT vaccin_PK PRIMARY KEY (idvaccin)
+
+	,CONSTRAINT vaccin_Categorie_FK FOREIGN KEY (id) REFERENCES Categorie(id)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: medcinSpecialite
+#------------------------------------------------------------
+
+CREATE TABLE medcinSpecialite(
+        idspecialite Int NOT NULL ,
+        numero       Varchar (5) NOT NULL
+	,CONSTRAINT medcinSpecialite_PK PRIMARY KEY (idspecialite,numero)
+
+	,CONSTRAINT medcinSpecialite_Specialite_FK FOREIGN KEY (idspecialite) REFERENCES Specialite(idspecialite)
+	,CONSTRAINT medcinSpecialite_Medcin0_FK FOREIGN KEY (numero) REFERENCES Medcin(numero)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Enfant_vaccin_medcin
+#------------------------------------------------------------
+
+CREATE TABLE Enfant_vaccin_medcin(
+        numero   Varchar (5) NOT NULL ,
+        idenfanf Int NOT NULL ,
+        idvaccin Int NOT NULL ,
+        date     Date NOT NULL
+	,CONSTRAINT Enfant_vaccin_medcin_PK PRIMARY KEY (numero,idenfanf,idvaccin)
+
+	,CONSTRAINT Enfant_vaccin_medcin_Medcin_FK FOREIGN KEY (numero) REFERENCES Medcin(numero)
+	,CONSTRAINT Enfant_vaccin_medcin_Enfant0_FK FOREIGN KEY (idenfanf) REFERENCES Enfant(idenfanf)
+	,CONSTRAINT Enfant_vaccin_medcin_vaccin1_FK FOREIGN KEY (idvaccin) REFERENCES vaccin(idvaccin)
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: ecole_medcin
+#------------------------------------------------------------
+
+CREATE TABLE ecole_medcin(
+        numero  Varchar (5) NOT NULL ,
+        idecole Int NOT NULL
+	,CONSTRAINT ecole_medcin_PK PRIMARY KEY (numero,idecole)
+
+	,CONSTRAINT ecole_medcin_Medcin_FK FOREIGN KEY (numero) REFERENCES Medcin(numero)
+	,CONSTRAINT ecole_medcin_Ecole0_FK FOREIGN KEY (idecole) REFERENCES Ecole(idecole)
+)ENGINE=InnoDB;
+
